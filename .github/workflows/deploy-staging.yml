@@ -29,6 +29,10 @@ jobs:
   Build-Docker-Image:
     runs-on: ubuntu-latest
     needs: build
+    permissions: 
+      contents: read
+      packages: write
+      
     name: Build image and store in Github Packages
     steps:
       - name: Checkout Repo
