@@ -11,8 +11,10 @@ env:
   
 jobs:
   build:
-    if  contains(github.event.pull_request.labels.*.name, 'stage')
     runs-on: ubuntu-latest
+    
+    if: contains(github.event.pull_request.labels.*.name, 'stage')
+    
     steps:
       - uses: actions/checkout@v2
       - name: npm install and build webpack
@@ -24,11 +26,9 @@ jobs:
           name: webpack artifacts
           path: public/
     
-    if: contains(github.event.pull_request.labels.*.name, 'spin up environment')
-  
-  Build-Docker-Image
+  Build-Docker-Image:
     runs-on: ubuntu-latest
-    need: build
+    needs: build
     name: Build image and store in Github Packages
     steps:
       - name: Checkout Repo
@@ -46,9 +46,9 @@ jobs:
           image-name: ${{env.DOCKER_IMAGE_NAME}}
         
         
-  Deploy to Azure
+  Deploy-to-Azure:
     runs-on: ubuntu-latest
-    need: Build-Docker-Image
+    needs: Build-Docker-Image
     name: Deploy app container to Azure
     steps:
       - name: Azure login
