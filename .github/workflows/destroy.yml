@@ -1,0 +1,27 @@
+name: Manual Destroy Azure environment
+
+on:
+  workflow_dispatch:
+  
+env: 
+  AZURE_RESOURCE_GROUP: cd-with-actions
+  AZURE_APP_PLAN: actions-ttt-deployment
+  AZURE_LOCATION: '"UK West"'
+  AZURE_WEBAPP_NAME: l00170155-ttt-app
+  
+jobs: 
+  destroy-azure-resources:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Azure login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+      - name: Create Azure resource group
+        if: success()
+        run: |
+          az group delete --name  ${{env.AZURE_RESOURCE_GROUP}} --subscription ${{secrets.AZURE_SUBSCRIPTION_ID}} --yes
